@@ -1,15 +1,86 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Commerce Frontend</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Welcome to Our Online Store</h1>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/dba8b3ff-b56e-4205-a473-95744671fde9.png" alt="Company logo - minimal abstract geometric shape with vibrant colors representing innovation" class="logo-img">
+                <span class="logo-text">The Market</span>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search products...">
+                <button class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Icons -->
+            <div class="icons-container">
+                <div class="cart-container">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge">3</span>
+                </div>
+                <div class="hamburger-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav">
+            <div class="close-btn">
+                <i class="fas fa-times"></i>
+            </div>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <div class="mobile-search">
+                <div class="search-container" style="width: 80%; margin: 0 auto;">
+                    <input type="text" class="search-input" placeholder="Search products...">
+                    <button class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to The Market</h1> <!-- Main heading -->
+            <h2>Biggest Sale of the Year!</h2> <!-- Subheading -->
+            <p>Save up to 50% on selected products. Limited time only!</p>
+            <a href="#products" class="cta-btn">Shop Now</a> <!-- CTA button -->
+        </div>
+    </section>
+
+    <main style="height: 2000px; padding: 2rem;">
+        <!-- Page content would go here -->
+    </main>
+
     <script src="scripts/app.js"></script>
 </body>
 </html>
