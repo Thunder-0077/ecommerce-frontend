@@ -20,4 +20,38 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'auto';
         });
     });
+
+    // Product grid dynamic rendering
+    const productGrid = document.getElementById('productGrid');
+    const apiUrl = 'https://fakestoreapi.com/products?limit=8';
+
+    // Show loading message
+    productGrid.innerHTML = `<div class="loading-message">Loading products...</div>`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(products => {
+            renderProductCards(products);
+        })
+        .catch(error => {
+            productGrid.innerHTML = `<p class="error-message">Failed to load products: ${error.message}</p>`;
+        });
 });
+
+function renderProductCards(products) {
+    const productGrid = document.getElementById('productGrid');
+    productGrid.innerHTML = products.map(product => `
+        <div class="product-card">
+            <img src="${product.image}" alt="${product.title}" class="product-image" loading="lazy">
+            <div class="product-name">${product.title}</div>
+            <div class="product-price">$${product.price}</div>
+            <div class="product-description">${product.description}</div>
+            <a href="#" class="cta-btn">Add to Cart</a>
+        </div>
+    `).join('');
+}

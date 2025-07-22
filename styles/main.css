@@ -295,6 +295,103 @@ nav ul li a:hover {
     box-shadow: 0 6px 24px rgba(99, 102, 241, 0.18);
 }
 
+/* Product Grid Layout */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on desktop */
+    gap: 2rem;
+    margin: 2rem 0;
+    padding: 0 2rem;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    transition: box-shadow 0.2s;
+}
+
+.product-card:hover {
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.18);
+}
+
+.product-image {
+    width: 100%;
+    max-width: 180px;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    object-fit: contain; /* Prevent distortion */
+    background: #f3f4f6;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.product-price {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.product-card .cta-btn {
+    width: 100%;
+    margin-top: auto;
+}
+
+.product-description {
+    font-size: 0.98rem;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    /* Truncate long descriptions */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Responsive grid */
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+    }
+}
+
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: 1fr; /* 1 column on mobile */
+        padding: 0 0.5rem;
+    }
+    .product-card {
+        padding: 1rem;
+    }
+    .product-image {
+        max-width: 100%;
+    }
+}
+
 /* Responsive Styles */
 @media (max-width: 1024px) {
     .search-container {
@@ -370,4 +467,18 @@ nav ul li a:hover {
         font-size: 0.95rem;
         padding: 0.7rem 1rem;
     }
+}
+
+.loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #6366f1;
+    margin: 2rem 0;
+}
+
+.error-message {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #e11d48;
+    margin: 2rem 0;
 }
