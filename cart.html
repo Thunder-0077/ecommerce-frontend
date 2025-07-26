@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | The Market</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/dba8b3ff-b56e-4205-a473-95744671fde9.png" alt="Company logo" class="logo-img">
+                <span class="logo-text">The Market</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search products...">
+                <button class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="cart-container">
+                <a href="cart.html" style="color:inherit;text-decoration:none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="cart-section">
+            <h1>Your Shopping Cart</h1>
+            <div id="cartItems"></div>
+            <button class="cta-btn" id="continueShopping" style="margin-top:2rem;">Continue Shopping</button>
+            <button class="cta-btn" id="checkoutBtn" style="margin-top:1rem;">Proceed to Checkout</button>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            &copy; 2025 The Market. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="scripts/app.js"></script>
+    <!-- Future: <script src="scripts/cart.js"></script> -->
+    <script>
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const cartCountElem = document.getElementById('cartCount');
+    if (cartCountElem) cartCountElem.textContent = totalQuantity;
+}
+
+function renderCartItems() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsDiv = document.getElementById('cartItems');
+    if (cart.length === 0) {
+        cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
+        return;
+    }
+    cartItemsDiv.innerHTML = cart.map((item, idx) => `
+        <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" class="cart-item-img"/>
+            <div class="cart-item-details">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-qty-group">
+                    <button class="qty-btn" data-action="decrease" data-index="${idx}">−</button>
+                    <span class="qty-value">${item.quantity}</span>
+                    <button class="qty-btn" data-action="increase" data-index="${idx}">+</button>
+                    <button class="remove-btn" data-index="${idx}">Remove</button>
+                </div>
+                <span class="cart-item-price">$${item.price}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderCartItems();
+    updateCartCount();
+    updateCheckoutBtn();
+
+    function updateCheckoutBtn() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const btn = document.getElementById('checkoutBtn');
+        if (!btn) return;
+        btn.disabled = cart.length === 0;
+        btn.style.opacity = cart.length === 0 ? '0.5' : '1';
+        btn.style.cursor = cart.length === 0 ? 'not-allowed' : 'pointer';
+    }
+
+    function updateTotalPrice() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * (item.quantity || 1)), 0);
+        let totalDiv = document.getElementById('cartTotal');
+        if (!totalDiv) {
+            totalDiv = document.createElement('div');
+            totalDiv.id = 'cartTotal';
+            totalDiv.style.margin = '2rem 0 0 0';
+            totalDiv.style.fontWeight = 'bold';
+            totalDiv.style.fontSize = '1.2rem';
+            document.querySelector('.cart-section').appendChild(totalDiv);
+        }
+        totalDiv.textContent = `Total: $${total.toFixed(2)}`;
+    }
+
+    document.getElementById('cartItems').addEventListener('click', function(e) {
+        const idx = parseInt(e.target.getAttribute('data-index'), 10);
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        // Remove item
+        if (e.target.classList.contains('remove-btn')) {
+            cart.splice(idx, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCartItems();
+            updateCartCount();
+            updateTotalPrice();
+            updateCheckoutBtn();
+            return;
+        }
+        // Increase quantity
+        if (e.target.classList.contains('qty-btn') && e.target.getAttribute('data-action') === 'increase') {
+            cart[idx].quantity = (cart[idx].quantity || 1) + 1;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCartItems();
+            updateCartCount();
+            updateTotalPrice();
+            updateCheckoutBtn();
+            return;
+        }
+        // Decrease quantity
+        if (e.target.classList.contains('qty-btn') && e.target.getAttribute('data-action') === 'decrease') {
+            cart[idx].quantity = Math.max(1, (cart[idx].quantity || 1) - 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCartItems();
+            updateCartCount();
+            updateTotalPrice();
+            updateCheckoutBtn();
+            return;
+        }
+    });
+
+    updateTotalPrice();
+    updateCheckoutBtn();
+
+    document.getElementById('checkoutBtn').onclick = function() {
+        if (this.disabled) return;
+        window.location.href = 'checkout.html';
+    };
+
+    document.getElementById('continueShopping').onclick = function() {
+        window.location.href = 'index.html';
+    };
+});
+    </script>
+</body>
+</html>

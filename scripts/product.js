@@ -138,14 +138,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCartCount() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const uniqueIds = new Set(cart.map(item => item.id));
-        document.getElementById('cartCount').textContent = uniqueIds.size;
+        const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        const cartCountElem = document.getElementById('cartCount');
+        if (cartCountElem) cartCountElem.textContent = totalQuantity;
     }
 
-    updateCartCount();
+    updateCartCount(); // Set cart count on page load
 
     // Add to Cart handler for product detail
-    productDetail.addEventListener('click', function(e) {
+    document.getElementById('productDetail').addEventListener('click', function(e) {
         if (e.target.classList.contains('cta-btn')) {
             e.preventDefault();
             const card = e.target.closest('.product-detail-card');
@@ -153,34 +154,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = card.querySelector('.product-name').textContent;
             const price = card.querySelector('.product-price').textContent.replace('$','');
             const image = card.querySelector('.product-image').src;
-            // Get selected variations and quantity
-            let color = null, size = null, qty = 1;
-            const colorBtn = card.querySelector('.color-btn.selected');
-            if (colorBtn) color = colorBtn.getAttribute('data-color');
-            const sizeSelect = card.querySelector('select#size');
-            if (sizeSelect) size = sizeSelect.value;
-            const qtyValue = card.querySelector('.qty-value');
-            if (qtyValue) qty = parseInt(qtyValue.textContent, 10);
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            // Store all variations and quantity in cart item
-            const cartItem = { id, name, price, image, color, size, quantity: qty };
-            // Only add if not already in cart with same variations
-            const existing = cart.find(item => item.id === id && item.color === color && item.size === size);
-            if (!existing) {
-                cart.push(cartItem);
-                localStorage.setItem('cart', JSON.stringify(cart));
+            let size = card.querySelector('select#size') ? card.querySelector('select#size').value : null;
+            let color = card.querySelector('select#color') ? card.querySelector('select#color').value : null;
+            const qty = Math.max(1, parseInt(card.querySelector('.qty-value') ? card.querySelector('.qty-value').textContent : "1", 10)); // Prevent zero/negative
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existing = cart.find(item => item.id === id && item.size === size && item.color === color);
+            if (existing) {
+                existing.quantity = (existing.quantity || 1) + qty;
+            } else {
+                cart.push({ id, name, price, image, size, color, quantity: qty });
             }
+            localStorage.setItem('cart', JSON.stringify(cart));
             updateCartCount();
-            // Show success message
-            let msg = card.querySelector('.cart-success-msg');
-            if (!msg) {
-                msg = document.createElement('div');
-                msg.className = 'cart-success-msg';
-                card.appendChild(msg);
-            }
-            msg.textContent = 'Added to cart!';
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 1500);
+
+            // Optional: Show feedback to user
+            e.target.textContent = "Added!";
+            setTimeout(() => { e.target.textContent = "Add to Cart"; }, 1200);
         }
     });
 });

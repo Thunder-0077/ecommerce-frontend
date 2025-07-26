@@ -64,18 +64,19 @@ function renderProductCards(products) {
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const uniqueIds = new Set(cart.map(item => item.id));
-    document.getElementById('cartCount').textContent = uniqueIds.size;
+    const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const cartCountElem = document.getElementById('cartCount');
+    if (cartCountElem) cartCountElem.textContent = totalQuantity;
 }
 
-// Call this on page load
 document.addEventListener('DOMContentLoaded', function() {
-    updateCartCount();
-    // ...existing code...
+    // ...existing nav/menu/product grid code...
+
+    updateCartCount(); // Ensure cart count is set on page load
 });
 
-// Add to Cart handler for product grid
 document.addEventListener('click', function(e) {
+    // Add to Cart handler for product grid
     if (e.target.classList.contains('cta-btn')) {
         e.preventDefault();
         const card = e.target.closest('.product-card');
@@ -84,13 +85,42 @@ document.addEventListener('click', function(e) {
         const name = card.querySelector('.product-name').textContent;
         const price = card.querySelector('.product-price').textContent.replace('$','');
         const image = card.querySelector('.product-image').src;
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const qty = 1;
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
         const existing = cart.find(item => item.id === id);
-        if (!existing) {
-            cart.push({ id, name, price, image });
-            localStorage.setItem('cart', JSON.stringify(cart));
+        if (existing) {
+            existing.quantity = (existing.quantity || 1) + qty;
+        } else {
+            cart.push({ id, name, price, image, quantity: qty });
         }
+        localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCount();
+
+        // Remove any existing confirmation message first
+        const oldMsg = card.querySelector('.cart-confirm-msg');
+        if (oldMsg) oldMsg.remove();
+
+        // Show confirmation message with animation
+        let confirmMsg = document.createElement('div');
+        confirmMsg.className = 'cart-confirm-msg';
+        confirmMsg.textContent = "Item added to cart!";
+        // Set initial style for centering before appending
+        confirmMsg.style.left = "50%";
+        confirmMsg.style.top = "10px";
+        confirmMsg.style.transform = "translateX(-50%)";
+        card.appendChild(confirmMsg);
+
+        // Force reflow to ensure animation triggers
+        void confirmMsg.offsetWidth;
+
+        setTimeout(() => {
+            confirmMsg.classList.add('fade-out');
+        }, 900);
+        setTimeout(() => {
+            confirmMsg.remove();
+        }, 1400);
+
         e.target.textContent = "Added!";
         setTimeout(() => { e.target.textContent = "Add to Cart"; }, 1200);
     }
